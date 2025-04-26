@@ -1,23 +1,30 @@
 const svg = d3.select(".responsive-svg-container")
-    .append("svg")
-    .attr("viewBox", "0 0 1200 1600")
-    .style("border", "1px solid black");
+  .append("svg")
+  .attr("viewBox", "0 0 500 500")
+  .style("border", "1px solid black");
 
 const createBarChart = data => {
-  const barHeight = 20;   
-  const barSpacing = 10;   
+  const xScale = d3.scaleLinear()
+    .domain([0, 1310])
+    .range([0, 500]);
+
+  const yScale = d3.scaleBand()
+    .domain(data.map(d => d.brand))
+    .range([0, 500])
+    .padding(0.1);
 
   svg
     .selectAll("rect")
     .data(data)
     .join("rect")
     .attr("class", d => `bar bar-${d.count}`)
-    .attr("x", 0)                   
-    .attr("y", (d, i) => i * (barHeight + barSpacing))
-    .attr("width", d => d.count)            
-    .attr("height", barHeight)       
-    .attr("fill", "blue");  
+    .attr("x", 0)
+    .attr("y", d => yScale(d.brand))
+    .attr("width", d => xScale(d.count))
+    .attr("height", yScale.bandwidth())
+    .attr("fill", "blue");
 };
+
 d3.csv("data/task4data.csv", d => {
   return {
     brand: d.brand,
